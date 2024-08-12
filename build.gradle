@@ -1,0 +1,78 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+group = 'com.codingcat'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "papermc-repo"
+        url = "https://repo.papermc.io/repository/maven-public/"
+    }
+    maven {
+        name = "sonatype"
+        url = "https://oss.sonatype.org/content/groups/public/"
+    }
+    maven {
+        name = "jitpack.io"
+        url = "https://jitpack.io"
+    }
+    maven {
+        name = "extendedclip-repo"
+        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+    }
+    maven {
+        name = "codemc-repo"
+        url = "https://repo.codemc.org/repository/maven-public/"
+    }
+}
+
+dependencies {
+    implementation "io.github.classgraph:classgraph:4.8.168"
+    compileOnly "me.clip:placeholderapi:2.11.5"
+    implementation "com.github.hamza-cskn.obliviate-invs:core:4.3.0"
+    implementation "de.tr7zw:item-nbt-api:2.12.2"
+    implementation "de.exlll:configlib-yaml:4.5.0"
+    implementation "com.zaxxer:HikariCP:5.1.0"
+    compileOnly "io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT"
+}
+
+shadowJar {
+    relocate 'io.github.classgraph', 'com.codingcat.catlib.lib.classgraph'
+    relocate 'nonapi.io.github.classgraph', 'com.codingcat.catlib.lib.classgraph_nonapi'
+    relocate 'com.zaxxer.hikari', 'com.codingcat.catlib.lib.hikari'
+    relocate 'de.exlll.configlib', 'com.codingcat.catlib.lib.configlib'
+    relocate 'de.tr7zw.changeme.nbtapi', 'com.codingcat.catlib.lib.nbtapi'
+    relocate 'mc.obliviate', 'com.codingcat.catlib.lib.obliviate'
+}
+jar.dependsOn(shadowJar)
+
+def targetJavaVersion = 17
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        options.release.set(targetJavaVersion)
+    }
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}
