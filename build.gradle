@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'maven-publish'
 }
 
@@ -34,22 +33,8 @@ repositories {
 dependencies {
     implementation "io.github.classgraph:classgraph:4.8.168"
     compileOnly "me.clip:placeholderapi:2.11.5"
-    implementation "com.github.hamza-cskn.obliviate-invs:core:4.3.0"
-    implementation "de.tr7zw:item-nbt-api:2.12.2"
-    implementation "de.exlll:configlib-yaml:4.5.0"
-    implementation "com.zaxxer:HikariCP:5.1.0"
     compileOnly "io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT"
 }
-
-shadowJar {
-    relocate 'io.github.classgraph', 'com.codingcat.catlib.lib.classgraph'
-    relocate 'nonapi.io.github.classgraph', 'com.codingcat.catlib.lib.classgraph_nonapi'
-    relocate 'com.zaxxer.hikari', 'com.codingcat.catlib.lib.hikari'
-    relocate 'de.exlll.configlib', 'com.codingcat.catlib.lib.configlib'
-    relocate 'de.tr7zw.changeme.nbtapi', 'com.codingcat.catlib.lib.nbtapi'
-    relocate 'mc.obliviate', 'com.codingcat.catlib.lib.obliviate'
-}
-jar.dependsOn(shadowJar)
 
 def targetJavaVersion = 17
 java {
