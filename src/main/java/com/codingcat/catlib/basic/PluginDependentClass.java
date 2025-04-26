@@ -17,6 +17,7 @@ public class PluginDependentClass {
     public JavaPlugin getBasicPlugin() {
         return plugin;
     }
+    @SuppressWarnings("unchecked")
     public <T extends JavaPlugin> T getPlugin() {
         if (this.getBasicPlugin() == null) return null;
 

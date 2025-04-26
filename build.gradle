@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'maven-publish'
 }
 
 group = 'com.codingcat'
@@ -52,6 +53,7 @@ jar.dependsOn(shadowJar)
 
 def targetJavaVersion = 17
 java {
+    withSourcesJar()
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
@@ -65,6 +67,27 @@ tasks.withType(JavaCompile).configureEach {
 
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
         options.release.set(targetJavaVersion)
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "codingcatRepo"
+            url = "https://maven.codingcat24.dev/releases"
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
+    publications {
+        maven(MavenPublication) {
+            groupId = group
+            artifactId = "CatLib"
+            version = version
+            from components.java
+        }
     }
 }
 
